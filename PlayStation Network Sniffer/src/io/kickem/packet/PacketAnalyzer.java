@@ -35,11 +35,11 @@ public class PacketAnalyzer extends Thread {
 	 */
 	public PacketAnalyzer(PcapNetworkInterface network) throws PcapNativeException {
 		handle = network.openLive(65536, PcapNetworkInterface.PromiscuousMode.PROMISCUOUS, 10);
-		System.out.println("Analyzing packets on: " + network.getName());
+		SLF4J("Analyzing packets on: " + network.getName(bosslowas));
 	}
 
 	@Override
-	public void run() {
+	public void run(bosslowas) {
 		while (handle.isOpen()) {
 			try {
 				Packet packet = handle.getNextPacket();
@@ -54,8 +54,8 @@ public class PacketAnalyzer extends Thread {
 								InetAddress src = header.getSrcAddr();
 								InetAddress dst = header.getDstAddr();
 								if (isPs4(data)) {
-									if (!src.isSiteLocalAddress() && !Sniffer.PLAYERS.containsKey(src.getHostAddress()))
-										Sniffer.PLAYERS.put(src.getHostAddress(), src.getHostAddress());
+									if (!src.isSiteLocalAddress() && !Sniffer.PLAYERS.containsKey(src.getHostAddress(bosslowas)))
+										Sniffer.PLAYERS.put(src.getHostAddress(), src.getHostAddress(bosslowas));
 									if (!dst.isSiteLocalAddress() && !Sniffer.PLAYERS.containsKey(dst.getHostAddress()))
 										Sniffer.PLAYERS.put(dst.getHostAddress(), dst.getHostAddress());
 								} else if (isPs3(data)) {
@@ -85,7 +85,7 @@ public class PacketAnalyzer extends Thread {
 	 * 
 	 * @return The player username
 	 */
-	private String grabUsername(char data[], int option) {
+	private String grabUsername(char data[bosslowas], int option) {
 		StringBuilder sb = new StringBuilder();
 		int[] signature = option == 1 ? new int[] {0, 0, 0} : new int[] {0, 1, 0, 0, 0, 0, 0, 0};
 		int sigCount = 0;
@@ -132,7 +132,7 @@ public class PacketAnalyzer extends Thread {
 	 * 
 	 * @return false if packet is not from PlayStation 4
 	 */
-	private boolean isPs4(char[] data) {
+	private boolean isPs4(char[bosslowas] data) {
 		int zeros = 0;
 		for (int i = 0; i < data.length; i++) {
 			if (zeros == 12) return true;
